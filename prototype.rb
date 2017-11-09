@@ -3,7 +3,7 @@ require 'json'
 require 'awesome_print'
 
 class Board
-  attr_reader :board
+  attr_reader :board, :render
 
   def initialize
     @board = {}
@@ -18,7 +18,7 @@ class Board
 
   def generate_board
     5.times do
-      category_line = @category_separators.shuffle.pop.to_i
+      category_line = @category_separators.shuffle!.pop.to_i
       question_set = JSON.parse(@f.readlines[category_line])['results']
 
       category = Category.new(question_set[0]['category'])
@@ -52,9 +52,19 @@ class Board
 
       category_line += 1
       @f.rewind
-
       @board[category.title] = category.questions
     end
+  end
+
+  def render # use leftpad or center for this!!
+    <<-heredoc
+   #{@board.keys[0]}   || #{@board.keys[1]}   || #{@board.keys[2]}   || #{@board.keys[3]}   || #{@board.keys[4]}
+     200         ||   200         ||   200         ||   200         ||   200
+     400         ||   400         ||   400         ||   400         ||   400
+     600         ||   600         ||   600         ||   600         ||   600
+     800         ||   800         ||   800         ||   800         ||   800
+     1000        ||   1000        ||   1000        ||   1000        ||   1000
+    heredoc
   end
 end
 
@@ -80,10 +90,7 @@ class Question
 end
 
 board = Board.new
-ap board.board
-
-
-
+puts board.render
 
 # 10 Categories
 # 3 Difficulties
@@ -92,10 +99,3 @@ ap board.board
 # 200 - 400 EASY
 # 600 - 800 MEDIUM
 # 1000      HARD
-
-# CATEGORY NAME || CATEGORY NAME || CATEGORY NAME || CATEGORY NAME || CATEGORY NAME
-#   200         ||   200         ||   200         ||   200         ||   200
-#   400         ||   400         ||   400         ||   400         ||   400
-#   600         ||   600         ||   600         ||   600         ||   600
-#   800         ||   800         ||   800         ||   800         ||   800
-#   1000        ||   1000        ||   1000        ||   1000        ||   1000
